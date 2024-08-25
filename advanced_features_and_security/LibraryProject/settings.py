@@ -113,7 +113,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = 'your_app_name.CustomUser'
+AUTH_USER_MODEL = 'bookshelf.CustomUser'
 
 
 # Static files (CSS, JavaScript, Images)
