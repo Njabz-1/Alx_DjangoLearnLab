@@ -10,7 +10,6 @@ def book_list(request):
 @permission_required('bookshelf.can_edit', raise_exception=True)
 def book_edit(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    # logic to edit the book
     return render(request, 'bookshelf/book_edit.html', {'book': book})
 
 def book_search(request):
