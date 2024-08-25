@@ -12,3 +12,11 @@ def book_edit(request, pk):
     book = get_object_or_404(Book, pk=pk)
     # logic to edit the book
     return render(request, 'bookshelf/book_edit.html', {'book': book})
+
+def book_search(request):
+    query = request.GET.get('q')
+    if query:
+        books = Book.objects.filter(title__icontains=query)
+    else:
+        books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
