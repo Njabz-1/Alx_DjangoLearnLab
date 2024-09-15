@@ -155,7 +155,7 @@ class PostListView(ListView):
             ).distinct()
         return queryset
 
-class TaggedPostListView(ListView):
+class PostByTagListView(ListView):
     model = Post
     template_name = 'blog/home.html'
     context_object_name = 'posts'
