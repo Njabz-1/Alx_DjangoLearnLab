@@ -1,10 +1,10 @@
 from rest_framework import viewsets, permissions, filters, generics, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer
 from .permissions import IsAuthorOrReadOnly
-from rest_framework.decorators import action
 from notifications.models import Notification
-from rest_framework.response import Response
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
@@ -18,13 +18,12 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def like(self, request, pk=None):
-        post = self.get_object()
-        user = request.user
-        like, created = Like.objects.get_or_create(user=user, post=post)
+        post = generics.get_object_or_404(Post, pk=pk)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
         if created:
             Notification.objects.create(
                 recipient=post.author,
-                actor=user,
+                actor=request.user,
                 verb='liked',
                 target=post
             )
@@ -33,9 +32,8 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def unlike(self, request, pk=None):
-        post = self.get_object()
-        user = request.user
-        like = Like.objects.filter(user=user, post=post).first()
+        post = generics.get_object_or_404(Post, pk=pk)
+        like = Like.objects.filter(user=request.user, post=post).first()
         if like:
             like.delete()
             return Response({'status': 'post unliked'}, status=status.HTTP_200_OK)
