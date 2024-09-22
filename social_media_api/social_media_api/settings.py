@@ -30,6 +30,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1','social-media-api-alx.herokuapp.com']
 
+PORT = int(os.environ.get('PORT', 5000))
+
 
 # Application definition
 
