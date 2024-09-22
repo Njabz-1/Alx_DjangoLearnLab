@@ -1,7 +1,7 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+import rest_framework.permissions as permissions
 from django.shortcuts import get_object_or_404
 from .models import CustomUser
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
@@ -28,7 +28,7 @@ class UserLoginView(APIView):
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated] 
 
     def get(self, request):
         serializer = UserProfileSerializer(request.user)
@@ -42,7 +42,7 @@ class UserProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class FollowUserView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated] 
 
     def post(self, request, user_id):
         user_to_follow = get_object_or_404(CustomUser, id=user_id)
@@ -52,7 +52,7 @@ class FollowUserView(APIView):
         return Response({'message': f'You are now following {user_to_follow.username}'}, status=status.HTTP_200_OK)
 
 class UnfollowUserView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated] 
 
     def post(self, request, user_id):
         user_to_unfollow = get_object_or_404(CustomUser, id=user_id)
@@ -60,7 +60,7 @@ class UnfollowUserView(APIView):
         return Response({'message': f'You have unfollowed {user_to_unfollow.username}'}, status=status.HTTP_200_OK)
 
 class UserListView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated] 
     serializer_class = UserProfileSerializer
 
     def get_queryset(self):
