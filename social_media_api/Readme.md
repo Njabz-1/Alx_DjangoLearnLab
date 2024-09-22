@@ -65,6 +65,55 @@ This project is a Django-based Social Media API with user authentication, regist
   - Update: `PUT /api/accounts/profile/`
   - Fields: bio, profile_picture
 
+### User Follow Management
+
+- Follow User: `POST /api/accounts/follow/<user_id>/`
+- Unfollow User: `POST /api/accounts/unfollow/<user_id>/`
+
+### Feed
+
+- Get Feed: `GET /api/feed/`
+
+
+## Usage Examples
+
+### Following a User
+
+To follow a user, send a POST request to `/api/accounts/follow/<user_id>/`:
+
+```
+POST /api/accounts/follow/2/
+```
+
+### Unfollowing a User
+
+To unfollow a user, send a POST request to `/api/accounts/unfollow/<user_id>/`:
+
+```
+POST /api/accounts/unfollow/2/
+```
+
+### Retrieving Feed
+
+To get the feed of posts from followed users, send a GET request to `/api/feed/`:
+
+```
+GET /api/feed/
+```
+
+This will return a paginated list of posts from users that the authenticated user is following, ordered by creation date (most recent first).
+
+## Model Changes
+
+The CustomUser model has been updated to include a `following` field:
+
+```python
+class CustomUser(AbstractUser):
+    following = models.ManyToManyField('self', symmetrical=False, related_name='followers', blank=True)
+```
+
+This allows for the implementation of user follow relationships.
+
 ## Usage
 
 ### Registration
