@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from .models import CustomUser
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
+from rest_framework.permissions import IsAuthenticated
 
 class UserRegistrationView(APIView):
     def post(self, request):
