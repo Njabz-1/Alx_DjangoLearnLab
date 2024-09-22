@@ -110,6 +110,46 @@ To update a user's profile, send a PUT request to `/api/accounts/profile/` with 
 }
 ```
 
+
+### Posts
+
+- List/Create Posts: `GET/POST /api/posts/`
+- Retrieve/Update/Delete Post: `GET/PUT/DELETE /api/posts/<id>/`
+- Search Posts: `GET /api/posts/?search=<query>`
+
+### Comments
+
+- List/Create Comments: `GET/POST /api/comments/`
+- Retrieve/Update/Delete Comment: `GET/PUT/DELETE /api/comments/<id>/`
+
+## Usage Examples
+
+### Creating a Post
+
+To create a new post, send a POST request to `/api/posts/` with the following JSON body:
+
+```json
+{
+  "title": "My First Post",
+  "content": "This is the content of my first post."
+}
+```
+
+### Creating a Comment
+
+To create a new comment, send a POST request to `/api/comments/` with the following JSON body:
+
+```json
+{
+  "post": 1,
+  "content": "This is a comment on the first post."
+}
+```
+
+### Searching Posts
+
+To search for posts, send a GET request to `/api/posts/?search=query`, replacing "query" with your search term.
+
 ## Development
 
 This project uses a custom user model (`CustomUser`) which extends Django's `AbstractUser`. The model includes additional fields for `bio`, `profile_picture`, and a many-to-many relationship for `followers`.
