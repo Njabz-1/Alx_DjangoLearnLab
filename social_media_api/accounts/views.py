@@ -1,13 +1,10 @@
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
-from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from .models import CustomUser
-
+from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserProfileSerializer
 
 class UserRegistrationView(APIView):
     def post(self, request):
@@ -30,6 +27,8 @@ class UserLoginView(APIView):
         return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         serializer = UserProfileSerializer(request.user)
         return Response(serializer.data)
@@ -40,7 +39,6 @@ class UserProfileView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 class FollowUserView(APIView):
     permission_classes = [IsAuthenticated]
@@ -49,7 +47,7 @@ class FollowUserView(APIView):
         user_to_follow = get_object_or_404(CustomUser, id=user_id)
         if request.user == user_to_follow:
             return Response({'error': 'You cannot follow yourself.'}, status=status.HTTP_400_BAD_REQUEST)
-        request.user.following.add(user_to_follow)
+        request.user.user_following.add(user_to_follow)
         return Response({'message': f'You are now following {user_to_follow.username}'}, status=status.HTTP_200_OK)
 
 class UnfollowUserView(APIView):
@@ -57,5 +55,17 @@ class UnfollowUserView(APIView):
 
     def post(self, request, user_id):
         user_to_unfollow = get_object_or_404(CustomUser, id=user_id)
-        request.user.following.remove(user_to_unfollow)
+        request.user.user_following.remove(user_to_unfollow)
         return Response({'message': f'You have unfollowed {user_to_unfollow.username}'}, status=status.HTTP_200_OK)
+
+class UserListView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer
+
+    def get_queryset(self):
+        return CustomUser.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
